@@ -3,10 +3,14 @@ import Vuex from 'vuex'
 import axios from 'axios'
 Vue.use(Vuex)
 
+const usename = document.cookie.nickname ? document.cookie.nickname : ''
 export default new Vuex.Store({
   state: {
+    usename,
     showFull: false, // 控制全屏播放器
-    openMini: false,
+    openMini: false, // 控制迷你音乐播放器
+    songsList: [], // 歌单列表
+    idx: null, // 音乐索引
     getSongsUrl: { // 存储音乐变量
       play: false, // 控制开始按钮
       name: '', // 歌曲名字
@@ -34,10 +38,20 @@ export default new Vuex.Store({
     toFull (state) {
       state.openMini = false
       state.showFull = true
+    },
+    songsList (state, [songs, idx]) {
+      state.songsList = songs
+      state.idx = idx
+    },
+    index (state, i) {
+      state.idx = i
+    },
+    nick (state, nick) { // cookies改变
+      state.nickname = nick
     }
   },
   actions: {
-    full (ctx, { id, name }) {
+    full (ctx, [id, name]) {
       ctx.commit('changeSt', name) // 传一个改变state的方法
       axios.get('/api/song/url?id=' + id).then((res) => { // 获取音乐Url
         // console.log(res)
