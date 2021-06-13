@@ -1,12 +1,29 @@
 <template>
     <div id="foundIndex">
+      <!-- 弹出层 -->
+      <van-popup v-model="show" position="left" :style="{ height: '100%', width: '70%' }" >
+        <div
+        class="wei"
+        v-if="wei"
+        @click="toLo()"
+        >
+          还未登录，请先登录
+        </div>
+        <div
+        class="yi"
+        v-else
+        >
+          已经登陆过
+        </div>
+      </van-popup>
         <!-- 头部搜索 -->
         <van-row class="top">
-        <van-col span="5" class="top-san"><van-icon name="wap-nav" /></van-col>
+        <van-col span="5" class="top-san"><van-icon name="wap-nav" @click="toDeng()"/></van-col>
         <van-col span="19"><van-search
                     v-model="value"
                     shape="round"
                     placeholder="请输入搜索关键词"
+                    @click="toSearch()"
                     /></van-col>
         </van-row>
         <!-- banner -->
@@ -172,6 +189,8 @@ export default {
   name: 'foundIndex',
   data () {
     return {
+      show: false, // 登录弹出层
+      wei: true,
       value: '',
       flag: 0,
       listBanner: [], // 存储获取的轮播图
@@ -218,6 +237,15 @@ export default {
     }
   },
   methods: {
+    toLo () { // 点击登录
+      this.$router.push('/choose')
+    },
+    toDeng () { // 点击显示登录弹出层
+      this.show = true
+    },
+    toSearch () { // 点击搜索框跳转到搜索页面
+      this.$router.push('/search')
+    },
     toTop (index) { // 点击圆形图标跳转到相应页面
       switch (index) {
         case 0:

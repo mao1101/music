@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="top" :style='{"background-image":"url("+detailTop.coverImgUrl+")","backgroundSize":"100%"}'>
+        <div class="top" :style='{"background-image":"url("+detailImg+")","backgroundSize":"100%"}'>
           <div
             class="topbg"
           >
@@ -12,16 +12,16 @@
           </div>
         </div>
         <div class="all-list">
-          <p class="all" v-if="detailTop.tracks">
+          <p class="all" v-if="detailTop">
             <van-icon name="play-circle" class="tubo"/>
             <span>播放全部</span>
-            <span class="len" v-if="detailTop">({{detailTop.tracks.length}})</span>
+            <span class="len" v-if="detailTop">({{detailTop.length}})</span>
           </p>
           <ul>
             <li class="songs-list"
-              v-for="(item, index) in detailTop.tracks"
+              v-for="(item, index) in detailTop"
               :key="index"
-              @click="showFull(item.id,item.name)"
+              @click="showFull(item.id,item.name,index)"
             >
               <span class="in">{{index + 1}}</span>
               <div class="ar-na">
@@ -38,23 +38,27 @@ export default {
   name: 'topDetail',
   data () {
     return {
-      detailTop: {}
+      detailTop: {},
+      detailImg: ''
     }
   },
   methods: {
     goback () { // 点击箭头返回上一级
       this.$router.go(-1)
     },
-    showFull (id, name) { // 不能在这个地方请求mp3地址
+    showFull (id, name, index) { // 不能在这个地方请求mp3地址
     // 需要开启全屏播放器
-      this.$store.dispatch('full', { id, name })
+      this.$store.dispatch('full', [id, name])
+      // this.$store.dispatch('')
+      this.$store.commit('songsList', [this.detailTop, index])
     },
     getResult () {
       const url = `/api/playlist/detail?id=${this.$route.params.id}`
       this.axios.get(url).then((res) => {
         // console.log(res)
         if (res.status === 200) {
-          this.detailTop = res.data.playlist
+          this.detailTop = res.data.playlist.tracks
+          this.detailImg = res.data.playlist.coverImgUrl
         }
       }).catch((err) => {
         console.log(err)
